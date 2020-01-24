@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace TemplateBuilder.Core
@@ -26,6 +27,7 @@ namespace TemplateBuilder.Core
 		{
 			using var stream = new FileStream(Path.Join(directory, "prompts.json"), FileMode.Open);
 			var jsonOpts = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
+			jsonOpts.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
 			return await JsonSerializer
 				.DeserializeAsync<List<DeserializedTemplatePrompt>>(stream, jsonOpts)
 				.AsTask()
