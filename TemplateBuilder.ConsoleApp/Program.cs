@@ -1,10 +1,12 @@
-﻿using McMaster.Extensions.CommandLineUtils;
-using System.Collections.Generic;
-using System.Linq;
-using TemplateBuilder.Core;
-
 namespace TemplateBuilder.ConsoleApp
 {
+	using System;
+	using System.Collections.Generic;
+	using McMaster.Extensions.CommandLineUtils;
+	using TemplateBuilder.Core;
+	using TemplateBuilder.Core.Models.Prompts;
+	using TemplateBuilder.Core.Models.Prompts.Abstract;
+
 	internal static class Program
 	{
 		private static int Main(string[] args)
@@ -14,87 +16,55 @@ namespace TemplateBuilder.ConsoleApp
 			app.HelpOption();
 			//var optionPath = app.Option("-p|--path <PATH>", "The path", CommandOptionType.SingleValue).IsRequired();
 
-			app.OnExecuteAsync(async (token) =>
+			app.OnExecuteAsync(async (_) =>
 			{
 				//var path = optionPath.Value();
-				var path = @"C:\Users\clarkero\Documents\projects\dotnet\TestFolder";
-				var prompts = await ReadPromptsClass.GetPrompts(path).ConfigureAwait(false);
-				var consolePromptReader = new ConsolePromptReader(prompts, PromptHandlers());
-				consolePromptReader.WritePrompts();
+				const string path = @"C:\Users\clarkero\Documents\projects\dotnet\TestFolder";
+				var prompts = await PromptReader.GetPromptsFromFile(path).ConfigureAwait(false);
+				var results = ConsolePromptReader.WritePrompts(prompts);
+				var config = await ConfigReader.GetConfigFromFile(path, results).ConfigureAwait(false);
+				var files = FileReader.GetFiles(path, config);
 				return 0;
 			});
 
 			return app.Execute(args);
 		}
-
-		private static List<ITemplatePromptHandler> PromptHandlers()
-		{
-			return new List<ITemplatePromptHandler>()
-			{
-				new BooleanPromptHandler(),
-				new StringPromptHandler(),
-				new IntPromptHandler()
-			};
-		}
 	}
 
-	internal class ConsolePromptReader
+	public static class ConsolePromptReader
 	{
-		private readonly IEnumerable<ITemplatePrompt> _prompts = new List<ITemplatePrompt>();
-		private readonly IEnumerable<ITemplatePromptHandler> _promptHandlers;
-
-		public ConsolePromptReader(IEnumerable<ITemplatePrompt> prompts, IEnumerable<ITemplatePromptHandler> promptHandlers)
+		public static IDictionary<string, object> WritePrompts(IDictionary<string, AbstractPrompt> prompts)
 		{
-			_prompts = prompts;
-			_promptHandlers = promptHandlers;
-		}
-
-		public void WritePrompts()
-		{
-			foreach (var prompt in _prompts)
+			var dictionary = new Dictionary<string, object>();
+			foreach (var prompt in prompts)
 			{
-				GetHandlerForPrompt(prompt);
+				switch (prompt.Value)
+				{
+					case BooleanPrompt booleanPrompt:
+						dictionary.Add(
+							prompt.Key,
+							Prompt.GetYesNo(booleanPrompt.Message, booleanPrompt.Value));
+						break;
+
+					case StringPrompt stringPrompt:
+						dictionary.Add(
+							prompt.Key,
+							Prompt.GetString(stringPrompt.Message, stringPrompt.Value) ?? string.Empty);
+						break;
+
+					case IntPrompt intPrompt:
+						dictionary.Add(
+							prompt.Key,
+							Prompt.GetInt(intPrompt.Message, intPrompt.Value));
+						break;
+
+					default:
+						throw new ArgumentException(
+							message: "No Handler For Prompt",
+							paramName: nameof(prompt));
+				}
 			}
-		}
-
-		private void GetHandlerForPrompt<T>(T prompt) where T : ITemplatePrompt
-		{
-			_promptHandlers.OfType<ITemplatePromptHandler<T>>().First().HandlePrompt(prompt);
-			//return _promptHandlers.First(e => e.Type == prompt.GetType());
-		}
-	}
-
-	public interface ITemplatePromptHandler { }
-
-	public interface ITemplatePromptHandler<T> : ITemplatePromptHandler where T : ITemplatePrompt
-	{
-		public T HandlePrompt(T prompt);
-	}
-
-	public class BooleanPromptHandler : ITemplatePromptHandler<BooleanPrompt>
-	{
-		public BooleanPrompt HandlePrompt(BooleanPrompt prompt)
-		{
-			prompt.Value = Prompt.GetYesNo(prompt.Message, prompt.Value);
-			return prompt;
-		}
-	}
-
-	public class StringPromptHandler : ITemplatePromptHandler<StringPrompt>
-	{
-		public StringPrompt HandlePrompt(StringPrompt prompt)
-		{
-			prompt.Value = Prompt.GetString(prompt.Message, prompt.Value);
-			return prompt;
-		}
-	}
-
-	public class IntPromptHandler : ITemplatePromptHandler<IntPrompt>
-	{
-		public IntPrompt HandlePrompt(IntPrompt prompt)
-		{
-			prompt.Value = Prompt.GetInt(prompt.Message, prompt.Value);
-			return prompt;
+			return dictionary;
 		}
 	}
 }

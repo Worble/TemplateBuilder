@@ -1,16 +1,20 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26124.0
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29613.14
 MinimumVisualStudioVersion = 15.0.26124.0
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemplateBuilder.ConsoleApp", "TemplateBuilder.ConsoleApp\TemplateBuilder.ConsoleApp.csproj", "{4FB6C6EA-9CB5-4B92-91FE-FFDE7845F1FA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TemplateBuilder.ConsoleApp", "TemplateBuilder.ConsoleApp\TemplateBuilder.ConsoleApp.csproj", "{4FB6C6EA-9CB5-4B92-91FE-FFDE7845F1FA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemplateBuilder.Core", "TemplateBuilder.Core\TemplateBuilder.Core.csproj", "{07F62DD2-8564-4178-8725-A79959F010F2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TemplateBuilder.Core", "TemplateBuilder.Core\TemplateBuilder.Core.csproj", "{07F62DD2-8564-4178-8725-A79959F010F2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemplateBuilder.Core.Tests", "TemplateBuilder.Core.Tests\TemplateBuilder.Core.Tests.csproj", "{E5F086A5-8727-4835-ADAA-872BFFD40578}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{833821F3-B83E-4425-ADAC-DC02850DB997}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
 EndProject
 Global
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Debug|x64 = Debug|x64
@@ -44,5 +48,23 @@ Global
 		{07F62DD2-8564-4178-8725-A79959F010F2}.Release|x64.Build.0 = Release|Any CPU
 		{07F62DD2-8564-4178-8725-A79959F010F2}.Release|x86.ActiveCfg = Release|Any CPU
 		{07F62DD2-8564-4178-8725-A79959F010F2}.Release|x86.Build.0 = Release|Any CPU
+		{E5F086A5-8727-4835-ADAA-872BFFD40578}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E5F086A5-8727-4835-ADAA-872BFFD40578}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E5F086A5-8727-4835-ADAA-872BFFD40578}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{E5F086A5-8727-4835-ADAA-872BFFD40578}.Debug|x64.Build.0 = Debug|Any CPU
+		{E5F086A5-8727-4835-ADAA-872BFFD40578}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{E5F086A5-8727-4835-ADAA-872BFFD40578}.Debug|x86.Build.0 = Debug|Any CPU
+		{E5F086A5-8727-4835-ADAA-872BFFD40578}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E5F086A5-8727-4835-ADAA-872BFFD40578}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E5F086A5-8727-4835-ADAA-872BFFD40578}.Release|x64.ActiveCfg = Release|Any CPU
+		{E5F086A5-8727-4835-ADAA-872BFFD40578}.Release|x64.Build.0 = Release|Any CPU
+		{E5F086A5-8727-4835-ADAA-872BFFD40578}.Release|x86.ActiveCfg = Release|Any CPU
+		{E5F086A5-8727-4835-ADAA-872BFFD40578}.Release|x86.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F23A2DC6-B6BD-49F2-842B-2F4EE427D24B}
 	EndGlobalSection
 EndGlobal
