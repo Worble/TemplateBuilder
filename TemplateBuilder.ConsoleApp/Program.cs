@@ -11,8 +11,9 @@ namespace TemplateBuilder.ConsoleApp
 			var app = new CommandLineApplication();
 
 			app.HelpOption();
+
 			var originPathOption = app.Option("-p|--path <PATH>", "The origin path", CommandOptionType.SingleValue).IsRequired();
-			var destinationPathOption = app.Option("-d|--destination <PATH>", "The destination path", CommandOptionType.SingleValue);
+			var destinationPathOption = app.Option("-d|--destination <PATH>", "[optional] The destination path. Defaults to the current working directory", CommandOptionType.SingleValue);
 
 			app.OnExecuteAsync(async (cancellationToken) =>
 			{
