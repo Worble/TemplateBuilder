@@ -1,11 +1,8 @@
 namespace TemplateBuilder.ConsoleApp
 {
 	using System;
-	using System.Collections.Generic;
 	using McMaster.Extensions.CommandLineUtils;
 	using TemplateBuilder.Core;
-	using TemplateBuilder.Core.Models.Prompts;
-	using TemplateBuilder.Core.Models.Prompts.Abstract;
 
 	internal static class Program
 	{
@@ -14,57 +11,33 @@ namespace TemplateBuilder.ConsoleApp
 			var app = new CommandLineApplication();
 
 			app.HelpOption();
-			//var optionPath = app.Option("-p|--path <PATH>", "The path", CommandOptionType.SingleValue).IsRequired();
+			var originPathOption = app.Option("-p|--path <PATH>", "The origin path", CommandOptionType.SingleValue).IsRequired();
+			var destinationPathOption = app.Option("-d|--destination <PATH>", "The destination path", CommandOptionType.SingleValue);
 
-			app.OnExecuteAsync(async (_) =>
+			app.OnExecuteAsync(async (cancellationToken) =>
 			{
-				//var path = optionPath.Value();
-				const string path = @"C:\Users\clarkero\Documents\projects\dotnet\TestFolder";
-				var prompts = await PromptReader.GetPromptsFromFile(path).ConfigureAwait(false);
-				var results = ConsolePromptReader.WritePrompts(prompts);
-				var config = await ConfigReader.GetConfigFromFile(path, results).ConfigureAwait(false);
-				var files = FileReader.GetFiles(path, config);
+				var originPath = originPathOption.Value() ?? throw new InvalidOperationException();
+				var destinationPath = destinationPathOption.Value() ?? Environment.CurrentDirectory;
+				PrintOpener(originPath, destinationPath);
+				var prompts = await PromptReader.GetPromptsFromFile(originPath).ConfigureAwait(false);
+				var promptResults = ConsolePromptReader.WritePrompts(prompts);
+				var config = await ConfigReader.GetConfigFromFile(originPath, promptResults).ConfigureAwait(false);
+				Console.WriteLine("Moving files...");
+				var filesResult = FileProcessor.GetFilesToMove(originPath, config, promptResults);
+				await FileProcessor.MoveFiles(originPath, destinationPath, filesResult, cancellationToken).ConfigureAwait(false);
+				Console.WriteLine("All done!");
 				return 0;
 			});
 
 			return app.Execute(args);
 		}
-	}
 
-	public static class ConsolePromptReader
-	{
-		public static IDictionary<string, object> WritePrompts(IDictionary<string, AbstractPrompt> prompts)
+		private static void PrintOpener(string originPath, string destinationPath)
 		{
-			var dictionary = new Dictionary<string, object>();
-			foreach (var prompt in prompts)
-			{
-				switch (prompt.Value)
-				{
-					case BooleanPrompt booleanPrompt:
-						dictionary.Add(
-							prompt.Key,
-							Prompt.GetYesNo(booleanPrompt.Message, booleanPrompt.Value));
-						break;
-
-					case StringPrompt stringPrompt:
-						dictionary.Add(
-							prompt.Key,
-							Prompt.GetString(stringPrompt.Message, stringPrompt.Value) ?? string.Empty);
-						break;
-
-					case IntPrompt intPrompt:
-						dictionary.Add(
-							prompt.Key,
-							Prompt.GetInt(intPrompt.Message, intPrompt.Value));
-						break;
-
-					default:
-						throw new ArgumentException(
-							message: "No Handler For Prompt",
-							paramName: nameof(prompt));
-				}
-			}
-			return dictionary;
+			Console.WriteLine("=================================");
+			Console.WriteLine($"Directory to read template from: {originPath}");
+			Console.WriteLine($"Directory to write to template to: {destinationPath}");
+			Console.WriteLine("=================================");
 		}
 	}
 }

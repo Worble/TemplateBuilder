@@ -1,4 +1,4 @@
-namespace TemplateBuilder.Core.Tests.PromptReaderTests.BooleanPromptTests
+namespace TemplateBuilder.Core.Tests.PromptReaderTests.IntegerPromptTests
 {
 	using System;
 	using System.Collections.Generic;

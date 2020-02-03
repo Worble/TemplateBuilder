@@ -1,4 +1,4 @@
-namespace TemplateBuilder.Core.Tests
+namespace TemplateBuilder.Core.Tests.PromptReaderTests
 {
 	using System;
 	using System.Linq;
