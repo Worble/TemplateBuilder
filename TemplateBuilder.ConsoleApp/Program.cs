@@ -19,13 +19,24 @@ namespace TemplateBuilder.ConsoleApp
 			{
 				var originPath = originPathOption.Value() ?? throw new InvalidOperationException();
 				var destinationPath = destinationPathOption.Value() ?? Environment.CurrentDirectory;
+
 				PrintOpener(originPath, destinationPath);
-				var prompts = await PromptReader.GetPromptsFromFile(originPath).ConfigureAwait(false);
+
+				var prompts = await PromptReader
+					.GetPromptsFromFile(originPath)
+					.ConfigureAwait(false);
 				var promptResults = ConsolePromptReader.WritePrompts(prompts);
-				var config = await ConfigReader.GetConfigFromFile(originPath, promptResults).ConfigureAwait(false);
+
+				var config = await ConfigReader
+					.GetConfigFromFile(originPath, promptResults)
+					.ConfigureAwait(false);
+
 				Console.WriteLine("Moving files...");
 				var filesResult = FileProcessor.GetFilesToMove(originPath, config, promptResults);
-				await FileProcessor.MoveFiles(originPath, destinationPath, filesResult, cancellationToken).ConfigureAwait(false);
+				await FileProcessor
+					.MoveFiles(originPath, destinationPath, filesResult, cancellationToken)
+					.ConfigureAwait(false);
+
 				Console.WriteLine("All done!");
 				return 0;
 			});

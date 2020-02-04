@@ -17,7 +17,6 @@ namespace TemplateBuilder.Core.Helpers
 		{
 			var renderSettings = new RenderSettings
 			{
-				ThrowOnDataMiss = true,
 				SkipHtmlEncoding = true
 			};
 			var stubble = new StubbleBuilder().Build();
