@@ -4,7 +4,6 @@ namespace TemplateBuilder.Core.Tests.ConfigReaderTests
 	using System.Collections.Generic;
 	using System.Text.Json;
 	using System.Threading.Tasks;
-	using Stubble.Core.Exceptions;
 	using TemplateBuilder.Core.Models.Config;
 	using Xunit;
 
@@ -77,10 +76,20 @@ namespace TemplateBuilder.Core.Tests.ConfigReaderTests
 		}
 
 		[Fact]
-		public async Task GivenAValidStringWithAVariableAndAnEmptyDictionary_WhenGetConfigFromStringIsCalled_ThenAStubbleDataMissExceptionIsThrown()
+		public async Task GivenAValidStringWithAVariableAndAnEmptyDictionary_WhenGetConfigFromStringIsCalled_ThenTheValueIsReturnedWithoutTheVariable()
 		{
 			//arrange
 			var dictionary = new Dictionary<string, object>();
+			var expected = new TemplateConfig
+			{
+				Files = new List<TemplateFileConfig>
+					{
+						new TemplateFileConfig
+						{
+							Glob = "/index.html"
+						}
+					}
+			};
 			const string json = @"
 {
 	""files"": [
@@ -91,11 +100,10 @@ namespace TemplateBuilder.Core.Tests.ConfigReaderTests
 }";
 
 			//act
-			await Assert.ThrowsAsync<StubbleDataMissException>(
-				() => ConfigReader.GetConfigFromString(json, dictionary))
-				.ConfigureAwait(false);
+			var result = await ConfigReader.GetConfigFromString(json, dictionary).ConfigureAwait(false);
 
 			//assert
+			Assert.Equal(expected.Files[0].Glob, result.Files[0].Glob);
 		}
 
 		[Fact]
@@ -130,12 +138,22 @@ namespace TemplateBuilder.Core.Tests.ConfigReaderTests
 		}
 
 		[Fact]
-		public async Task GivenAValidString_WithASection_AndADictionaryWithoutTheSectionVariableEntry_WhenGetConfigFromStringIsCalled_ThenAStubbleDataMissExceptionIsThrown()
+		public async Task GivenAValidString_WithASection_AndADictionaryWithoutTheSectionVariableEntry_WhenGetConfigFromStringIsCalled_ThenTheSectionIsntRendered()
 		{
 			//arrange
 			var dictionary = new Dictionary<string, object>()
 			{
 				{ "projectName", "myProject" }
+			};
+			var expected = new TemplateConfig
+			{
+				Files = new List<TemplateFileConfig>
+					{
+						new TemplateFileConfig
+						{
+							Glob = "myProject/index.html"
+						}
+					}
 			};
 			const string json = @"
 {
@@ -151,10 +169,11 @@ namespace TemplateBuilder.Core.Tests.ConfigReaderTests
 }";
 
 			//act
-			await Assert.ThrowsAsync<StubbleDataMissException>(
-							() => ConfigReader.GetConfigFromString(json, dictionary))
-							.ConfigureAwait(false);
+			var result = await ConfigReader.GetConfigFromString(json, dictionary).ConfigureAwait(false);
+
 			//assert
+			Assert.Single(expected.Files);
+			Assert.Equal(expected.Files[0].Glob, result.Files[0].Glob);
 		}
 
 		[Fact]

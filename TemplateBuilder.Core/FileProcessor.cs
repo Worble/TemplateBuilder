@@ -1,5 +1,6 @@
 namespace TemplateBuilder.Core
 {
+	using System;
 	using System.Collections.Generic;
 	using System.IO;
 	using System.Linq;
@@ -23,8 +24,14 @@ namespace TemplateBuilder.Core
 		/// <param name="config">The <see cref="TemplateConfig"/></param>
 		/// <param name="promptResults">A <see cref="IDictionary{TKey, TValue}"/> of values from the prompts, where the key is the <see cref="AbstractPrompt.Id"/> and Value is the prompt result</param>
 		/// <returns>A <see cref="FileGroup"/> of all files and the required template variables</returns>
+		/// <exception cref="ArgumentException"></exception>
 		public static IEnumerable<FileGroup> GetFilesToMove(string sourceDirectory, TemplateConfig config, IDictionary<string, object> promptResults)
 		{
+			if (string.IsNullOrWhiteSpace(sourceDirectory))
+			{
+				throw new ArgumentException("Source directory cannot be null or empty string", nameof(sourceDirectory));
+			}
+
 			var filesToMove = new List<FileGroup>();
 			var info = new DirectoryInfoWrapper(new DirectoryInfo(sourceDirectory));
 

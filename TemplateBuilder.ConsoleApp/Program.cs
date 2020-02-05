@@ -12,13 +12,15 @@ namespace TemplateBuilder.ConsoleApp
 
 			app.HelpOption();
 
-			var originPathOption = app.Option("-p|--path <PATH>", "The origin path", CommandOptionType.SingleValue).IsRequired();
-			var destinationPathOption = app.Option("-d|--destination <PATH>", "[optional] The destination path. Defaults to the current working directory", CommandOptionType.SingleValue);
+			//var originPathOption = app.Option("-p|--path <PATH>", "The origin path", CommandOptionType.SingleValue).IsRequired();
+			//var destinationPathOption = app.Option("-d|--destination <PATH>", "[optional] The destination path. Defaults to the current working directory", CommandOptionType.SingleValue);
 
 			app.OnExecuteAsync(async (cancellationToken) =>
 			{
-				var originPath = originPathOption.Value() ?? throw new InvalidOperationException();
-				var destinationPath = destinationPathOption.Value() ?? Environment.CurrentDirectory;
+				//var originPath = originPathOption.Value() ?? throw new InvalidOperationException();
+				//var destinationPath = destinationPathOption.Value() ?? Environment.CurrentDirectory;
+				var originPath = @"C:\Users\clarkero\Documents\projects\dotnet\TestFolder";
+				var destinationPath = @"C:\Users\clarkero\Documents\projects\TestFolderTwo";
 
 				PrintOpener(originPath, destinationPath);
 

@@ -7,11 +7,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TemplateBuilder.ConsoleApp"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TemplateBuilder.Core", "TemplateBuilder.Core\TemplateBuilder.Core.csproj", "{07F62DD2-8564-4178-8725-A79959F010F2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemplateBuilder.Core.Tests", "TemplateBuilder.Core.Tests\TemplateBuilder.Core.Tests.csproj", "{E5F086A5-8727-4835-ADAA-872BFFD40578}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TemplateBuilder.Core.Tests", "TemplateBuilder.Core.Tests\TemplateBuilder.Core.Tests.csproj", "{E5F086A5-8727-4835-ADAA-872BFFD40578}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{833821F3-B83E-4425-ADAC-DC02850DB997}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
+		TODO.md = TODO.md
 	EndProjectSection
 EndProject
 Global
