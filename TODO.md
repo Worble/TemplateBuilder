@@ -22,3 +22,5 @@
 - Git submodule for composability support
 
 - Add a choice option field
+
+- Stubble options for throwing on missing keys (e.g throw on missing keys in config, but don't throw for missing keys in file)

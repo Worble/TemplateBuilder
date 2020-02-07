@@ -8,13 +8,14 @@ namespace TemplateBuilder.Core.Tests.PromptReaderTests
 	using FluentValidation;
 	using TemplateBuilder.Core.Exceptions;
 	using TemplateBuilder.Core.Models.Prompts;
+	using TemplateBuilder.Core.Tests.Abstract;
 	using Xunit;
 
-	public sealed class GetPromptsFromFileTests : IDisposable
+	public sealed class GetPromptsFromFileTests : FileTestBase
 	{
-		private const string JSON_FILENAME = "templatePrompts.json";
-		private static string TempFile => Path.Join(TempPath, JSON_FILENAME);
-		private static string TempPath { get; } = Path.Join(Path.GetTempPath(), Guid.NewGuid().ToString());
+		#region Variables
+
+		internal override string Filename => "templatePrompts.json";
 
 		private const string VALID_MULTIPLE_PROMPTS = @"
 [
@@ -52,22 +53,7 @@ namespace TemplateBuilder.Core.Tests.PromptReaderTests
 	}
 ]";
 
-		public GetPromptsFromFileTests()
-		{
-			if (Directory.Exists(TempPath))
-			{
-				Directory.Delete(TempPath, true);
-			}
-			Directory.CreateDirectory(TempPath);
-		}
-
-		public void Dispose()
-		{
-			if (Directory.Exists(TempPath))
-			{
-				Directory.Delete(TempPath, true);
-			}
-		}
+		#endregion Variables
 
 		[Fact]
 		public async Task GivenAnEmptyString_WhenGetPromptsFromFileIsCalled_ThenAnArgumentExceptionIsThrown()
