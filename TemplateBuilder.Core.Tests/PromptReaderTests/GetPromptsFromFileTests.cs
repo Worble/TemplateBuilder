@@ -6,8 +6,7 @@ namespace TemplateBuilder.Core.Tests.PromptReaderTests
 	using System.Text.Json;
 	using System.Threading.Tasks;
 	using FluentValidation;
-	using TemplateBuilder.Core.Exceptions;
-	using TemplateBuilder.Core.Models.Prompts;
+	using TemplateBuilder.Core.Enums;
 	using TemplateBuilder.Core.Tests.Abstract;
 	using Xunit;
 
@@ -193,7 +192,7 @@ namespace TemplateBuilder.Core.Tests.PromptReaderTests
 			await File.WriteAllTextAsync(TempFile, jsonString).ConfigureAwait(false);
 
 			//act
-			await Assert.ThrowsAsync<InvalidPromptTypeException>(
+			await Assert.ThrowsAsync<ValidationException>(
 				() => PromptReader.GetPromptsFromFile(TempPath))
 				.ConfigureAwait(false);
 
@@ -237,10 +236,10 @@ namespace TemplateBuilder.Core.Tests.PromptReaderTests
 				.ConfigureAwait(false);
 
 			//assert
-			Assert.Equal(expectedCount, actual.Count);
-			Assert.Single(actual.Where(e => e.Value.GetType() == typeof(BooleanPrompt)));
-			Assert.Equal(expectedStringCount, actual.Count(e => e.Value.GetType() == typeof(StringPrompt)));
-			Assert.Equal(expectedIntCount, actual.Count(e => e.Value.GetType() == typeof(IntPrompt)));
+			Assert.Equal(expectedCount, actual.Count());
+			Assert.Single(actual.Where(e => e.PromptType == PromptType.Boolean));
+			Assert.Equal(expectedStringCount, actual.Count(e => e.PromptType == PromptType.String));
+			Assert.Equal(expectedIntCount, actual.Count(e => e.PromptType == PromptType.Int));
 		}
 
 		[Fact]
@@ -260,10 +259,10 @@ namespace TemplateBuilder.Core.Tests.PromptReaderTests
 				.ConfigureAwait(false);
 
 			//assert
-			Assert.Equal(expectedCount, actual.Count);
-			Assert.Single(actual.Where(e => e.Value.GetType() == typeof(BooleanPrompt)));
-			Assert.Equal(expectedStringCount, actual.Count(e => e.Value.GetType() == typeof(StringPrompt)));
-			Assert.Equal(expectedIntCount, actual.Count(e => e.Value.GetType() == typeof(IntPrompt)));
+			Assert.Equal(expectedCount, actual.Count());
+			Assert.Single(actual.Where(e => e.PromptType == PromptType.Boolean));
+			Assert.Equal(expectedStringCount, actual.Count(e => e.PromptType == PromptType.String));
+			Assert.Equal(expectedIntCount, actual.Count(e => e.PromptType == PromptType.Int));
 		}
 
 		[Fact]

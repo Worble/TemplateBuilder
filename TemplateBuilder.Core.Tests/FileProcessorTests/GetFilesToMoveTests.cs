@@ -75,9 +75,8 @@ namespace TemplateBuilder.Core.Tests.FileProcessorTests
 
 		[Theory]
 		[InlineData(new object[] { 2 })]
-		[InlineData(new object[] { 3 })]
-		[InlineData(new object[] { 5 })]
 		[InlineData(new object[] { 8 })]
+		[InlineData(new object[] { 20 })]
 		public async Task GivenATemplateWithMultipleMatchingGlobs_AndValidFilesToMove_WhenGetFilesToMoveIsCalled_ThenAllTheFilesWillBeFound(int expectedAmount)
 		{
 			//arrange
@@ -100,9 +99,8 @@ namespace TemplateBuilder.Core.Tests.FileProcessorTests
 
 		[Theory]
 		[InlineData(new object[] { 2, 3 })]
-		[InlineData(new object[] { 3, 5 })]
-		[InlineData(new object[] { 5, 2 })]
 		[InlineData(new object[] { 8, 4 })]
+		[InlineData(new object[] { 12, 20 })]
 		public async Task GivenMultipleGlobsWithMatchingFiles_AndValidFilesToMove_WhenGetFilesToMoveIsCalled_ThenAllTheFilesWillBeFound(int globOneExpectedAmount, int globTwoExpectedAmount)
 		{
 			//arrange

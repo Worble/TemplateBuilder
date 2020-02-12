@@ -3,7 +3,6 @@ namespace TemplateBuilder.Core.Tests.PromptReaderTests.StringPromptTests
 	using System.Collections.Generic;
 	using System.Linq;
 	using TemplateBuilder.Core.Models.Prompts;
-	using TemplateBuilder.Core.Models.Prompts.Abstract;
 	using Xunit;
 
 	public class GetPromptsFromString_StringPromptTests
@@ -13,11 +12,11 @@ namespace TemplateBuilder.Core.Tests.PromptReaderTests.StringPromptTests
 		{
 			//arrange
 			const int expectedCount = 1;
-			var expectedObject = new StringPrompt
+			var expectedObject = new TemplatePrompt
 			{
 				Id = "StringPromptId",
 				Message = "String Prompt Message",
-				Value = ""
+				DefaultValue = null
 			};
 			const string jsonString = @"
 [
@@ -40,11 +39,11 @@ namespace TemplateBuilder.Core.Tests.PromptReaderTests.StringPromptTests
 		{
 			//arrange
 			const int expectedCount = 1;
-			var expectedObject = new StringPrompt
+			var expectedObject = new TemplatePrompt
 			{
 				Id = "StringPromptId",
 				Message = "String Prompt Message",
-				Value = "StringValue"
+				DefaultValue = "StringValue"
 			};
 			const string jsonString = @"
 [
@@ -68,11 +67,11 @@ namespace TemplateBuilder.Core.Tests.PromptReaderTests.StringPromptTests
 		{
 			//arrange
 			const int expectedCount = 1;
-			var expectedObject = new StringPrompt
+			var expectedObject = new TemplatePrompt
 			{
 				Id = "StringPromptId",
 				Message = "String Prompt Message",
-				Value = "123"
+				DefaultValue = "123"
 			};
 			const string jsonString = @"
 [
@@ -96,11 +95,11 @@ namespace TemplateBuilder.Core.Tests.PromptReaderTests.StringPromptTests
 		{
 			//arrange
 			const int expectedCount = 1;
-			var expectedObject = new StringPrompt
+			var expectedObject = new TemplatePrompt
 			{
 				Id = "StringPromptId",
 				Message = "String Prompt Message",
-				Value = "False"
+				DefaultValue = "False"
 			};
 			const string jsonString = @"
 [
@@ -119,15 +118,14 @@ namespace TemplateBuilder.Core.Tests.PromptReaderTests.StringPromptTests
 			AssertStringPromptEquality(expectedCount, expectedObject, result);
 		}
 
-		private static void AssertStringPromptEquality(int expectedCount, StringPrompt expectedObject, IDictionary<string, AbstractPrompt> result)
+		private static void AssertStringPromptEquality(int expectedCount, TemplatePrompt expectedObject, IEnumerable<TemplatePrompt> result)
 		{
-			Assert.Equal(expectedCount, result.Count);
-			Assert.True(result.First().Key == expectedObject.Id);
-			Assert.IsType<StringPrompt>(result.First().Value);
-			var resultObject = (StringPrompt)result.First().Value;
+			Assert.Equal(expectedCount, result.Count());
+			Assert.True(result.First().Id == expectedObject.Id);
+			var resultObject = result.First();
 			Assert.Equal(expectedObject.Id, resultObject.Id);
 			Assert.Equal(expectedObject.Message, resultObject.Message);
-			Assert.Equal(expectedObject.Value, resultObject.Value);
+			Assert.Equal(expectedObject.DefaultValue, resultObject.DefaultValue == null ? null : resultObject.GetStringValue());
 		}
 	}
 }

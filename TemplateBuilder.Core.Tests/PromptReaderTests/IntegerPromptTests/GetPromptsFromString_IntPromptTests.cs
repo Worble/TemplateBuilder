@@ -1,10 +1,9 @@
 namespace TemplateBuilder.Core.Tests.PromptReaderTests.IntegerPromptTests
 {
-	using System;
 	using System.Collections.Generic;
 	using System.Linq;
+	using FluentValidation;
 	using TemplateBuilder.Core.Models.Prompts;
-	using TemplateBuilder.Core.Models.Prompts.Abstract;
 	using Xunit;
 
 	public class GetPromptsFromString_IntPromptTests
@@ -14,11 +13,11 @@ namespace TemplateBuilder.Core.Tests.PromptReaderTests.IntegerPromptTests
 		{
 			//arrange
 			const int expectedCount = 1;
-			var expectedObject = new IntPrompt
+			var expectedObject = new TemplatePrompt
 			{
 				Id = "IntegerPromptId",
 				Message = "Integer Prompt Message",
-				Value = default
+				DefaultValue = null
 			};
 			const string jsonString = @"
 [
@@ -41,11 +40,11 @@ namespace TemplateBuilder.Core.Tests.PromptReaderTests.IntegerPromptTests
 		{
 			//arrange
 			const int expectedCount = 1;
-			var expectedObject = new IntPrompt
+			var expectedObject = new TemplatePrompt
 			{
 				Id = "IntegerPromptId",
 				Message = "Integer Prompt Message",
-				Value = 1
+				DefaultValue = 1
 			};
 			const string jsonString = @"
 [
@@ -69,11 +68,11 @@ namespace TemplateBuilder.Core.Tests.PromptReaderTests.IntegerPromptTests
 		{
 			//arrange
 			const int expectedCount = 1;
-			var expectedObject = new IntPrompt
+			var expectedObject = new TemplatePrompt
 			{
 				Id = "IntegerPromptId",
 				Message = "Integer Prompt Message",
-				Value = 1
+				DefaultValue = 1
 			};
 			const string jsonString = @"
 [
@@ -107,7 +106,7 @@ namespace TemplateBuilder.Core.Tests.PromptReaderTests.IntegerPromptTests
 ]";
 
 			//act
-			Assert.Throws<FormatException>(() => PromptReader.GetPromptsFromString(jsonString));
+			Assert.Throws<ValidationException>(() => PromptReader.GetPromptsFromString(jsonString));
 		}
 
 		[Fact]
@@ -125,19 +124,17 @@ namespace TemplateBuilder.Core.Tests.PromptReaderTests.IntegerPromptTests
 ]";
 
 			//act
-			Assert.Throws<FormatException>(() => PromptReader.GetPromptsFromString(jsonString));
+			Assert.Throws<ValidationException>(() => PromptReader.GetPromptsFromString(jsonString));
 		}
 
-		private static void AssertIntPromptEquality(int expectedCount, IntPrompt expectedObject, IDictionary<string, AbstractPrompt> result)
+		private static void AssertIntPromptEquality(int expectedCount, TemplatePrompt expectedObject, IEnumerable<TemplatePrompt> result)
 		{
-			Assert.Equal(expectedCount, result.Count);
-			Assert.True(result.First().Key == expectedObject.Id);
-			Assert.IsType<IntPrompt>(result.First().Value);
-			var resultObject = (IntPrompt)result.First().Value;
+			Assert.Equal(expectedCount, result.Count());
+			Assert.True(result.First().Id == expectedObject.Id);
+			var resultObject = result.First();
 			Assert.Equal(expectedObject.Id, resultObject.Id);
 			Assert.Equal(expectedObject.Message, resultObject.Message);
-			Assert.Equal(expectedObject.Value, resultObject.Value);
-			Assert.Equal(expectedObject.Value, resultObject.Value);
+			Assert.Equal(expectedObject.DefaultValue, resultObject.DefaultValue == null ? (int?)null : resultObject.GetIntValue());
 		}
 	}
 }

@@ -8,7 +8,6 @@ namespace TemplateBuilder.Core
 	using System.Threading.Tasks;
 	using TemplateBuilder.Core.Helpers;
 	using TemplateBuilder.Core.Models.Config;
-	using TemplateBuilder.Core.Models.Prompts.Abstract;
 
 	public static class ConfigReader
 	{

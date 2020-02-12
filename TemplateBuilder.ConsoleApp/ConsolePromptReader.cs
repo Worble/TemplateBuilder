@@ -3,8 +3,8 @@ namespace TemplateBuilder.ConsoleApp
 	using System;
 	using System.Collections.Generic;
 	using McMaster.Extensions.CommandLineUtils;
+	using TemplateBuilder.Core.Enums;
 	using TemplateBuilder.Core.Models.Prompts;
-	using TemplateBuilder.Core.Models.Prompts.Abstract;
 
 	public static class ConsolePromptReader
 	{
@@ -14,29 +14,30 @@ namespace TemplateBuilder.ConsoleApp
 		/// <param name="prompts">The prompts.</param>
 		/// <returns>An <see cref="Dictionary{TKey, TValue}" of responses/></returns>
 		/// <exception cref="ArgumentException"></exception>
-		public static Dictionary<string, object> WritePrompts(IEnumerable<KeyValuePair<string, AbstractPrompt>> prompts)
+		public static Dictionary<string, object> WritePrompts(IEnumerable<TemplatePrompt> prompts)
 		{
 			var dictionary = new Dictionary<string, object>();
 			foreach (var prompt in prompts)
 			{
-				switch (prompt.Value)
+				switch (prompt.PromptType)
 				{
-					case BooleanPrompt booleanPrompt:
+					case PromptType.Boolean:
 						dictionary.Add(
-							prompt.Key,
-							Prompt.GetYesNo(booleanPrompt.Message, booleanPrompt.Value));
+							prompt.Id,
+							Prompt.GetYesNo(prompt.Message, prompt.GetBoolValue()));
 						break;
 
-					case StringPrompt stringPrompt:
+					case PromptType.String:
 						dictionary.Add(
-							prompt.Key,
-							Prompt.GetString(stringPrompt.Message, stringPrompt.Value) ?? string.Empty);
+							prompt.Id,
+							Prompt.GetString(
+								prompt.Message, prompt.GetStringValue()) ?? string.Empty);
 						break;
 
-					case IntPrompt intPrompt:
+					case PromptType.Int:
 						dictionary.Add(
-							prompt.Key,
-							Prompt.GetInt(intPrompt.Message, intPrompt.Value));
+							prompt.Id,
+							Prompt.GetInt(prompt.Message, prompt.GetIntValue()));
 						break;
 
 					default:

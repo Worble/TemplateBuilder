@@ -1,10 +1,9 @@
 namespace TemplateBuilder.Core.Tests.PromptReaderTests.BooleanPromptTests
 {
-	using System;
 	using System.Collections.Generic;
 	using System.Linq;
+	using FluentValidation;
 	using TemplateBuilder.Core.Models.Prompts;
-	using TemplateBuilder.Core.Models.Prompts.Abstract;
 	using Xunit;
 
 	public class GetPromptsFromString_BooleanPromptTests
@@ -14,11 +13,11 @@ namespace TemplateBuilder.Core.Tests.PromptReaderTests.BooleanPromptTests
 		{
 			//arrange
 			const int expectedCount = 1;
-			var expectedObject = new BooleanPrompt
+			var expectedObject = new TemplatePrompt
 			{
 				Id = "BooleanPromptId",
 				Message = "Boolean Prompt Message",
-				Value = default
+				DefaultValue = null
 			};
 			const string jsonString = @"
 [
@@ -41,11 +40,11 @@ namespace TemplateBuilder.Core.Tests.PromptReaderTests.BooleanPromptTests
 		{
 			//arrange
 			const int expectedCount = 1;
-			var expectedObject = new BooleanPrompt
+			var expectedObject = new TemplatePrompt
 			{
 				Id = "BooleanPromptId",
 				Message = "Boolean Prompt Message",
-				Value = true
+				DefaultValue = true
 			};
 			const string jsonString = @"
 [
@@ -69,11 +68,11 @@ namespace TemplateBuilder.Core.Tests.PromptReaderTests.BooleanPromptTests
 		{
 			//arrange
 			const int expectedCount = 1;
-			var expectedObject = new BooleanPrompt
+			var expectedObject = new TemplatePrompt
 			{
 				Id = "BooleanPromptId",
 				Message = "Boolean Prompt Message",
-				Value = true
+				DefaultValue = true
 			};
 			const string jsonString = @"
 [
@@ -97,11 +96,11 @@ namespace TemplateBuilder.Core.Tests.PromptReaderTests.BooleanPromptTests
 		{
 			//arrange
 			const int expectedCount = 1;
-			var expectedObject = new BooleanPrompt
+			var expectedObject = new TemplatePrompt
 			{
 				Id = "BooleanPromptId",
 				Message = "Boolean Prompt Message",
-				Value = false
+				DefaultValue = false
 			};
 			const string jsonString = @"
 [
@@ -125,11 +124,11 @@ namespace TemplateBuilder.Core.Tests.PromptReaderTests.BooleanPromptTests
 		{
 			//arrange
 			const int expectedCount = 1;
-			var expectedObject = new BooleanPrompt
+			var expectedObject = new TemplatePrompt
 			{
 				Id = "BooleanPromptId",
 				Message = "Boolean Prompt Message",
-				Value = false
+				DefaultValue = false
 			};
 			const string jsonString = @"
 [
@@ -163,7 +162,7 @@ namespace TemplateBuilder.Core.Tests.PromptReaderTests.BooleanPromptTests
 ]";
 
 			//act
-			Assert.Throws<FormatException>(() => PromptReader.GetPromptsFromString(jsonString));
+			Assert.Throws<ValidationException>(() => PromptReader.GetPromptsFromString(jsonString));
 		}
 
 		[Fact]
@@ -181,19 +180,17 @@ namespace TemplateBuilder.Core.Tests.PromptReaderTests.BooleanPromptTests
 ]";
 
 			//act
-			Assert.Throws<FormatException>(() => PromptReader.GetPromptsFromString(jsonString));
+			Assert.Throws<ValidationException>(() => PromptReader.GetPromptsFromString(jsonString));
 		}
 
-		private static void AssertBooleanPromptEquality(int expectedCount, BooleanPrompt expectedObject, IDictionary<string, AbstractPrompt> result)
+		private static void AssertBooleanPromptEquality(int expectedCount, TemplatePrompt expectedObject, IEnumerable<TemplatePrompt> result)
 		{
-			Assert.Equal(expectedCount, result.Count);
-			Assert.True(result.First().Key == expectedObject.Id);
-			Assert.IsType<BooleanPrompt>(result.First().Value);
-			var resultObject = (BooleanPrompt)result.First().Value;
+			Assert.Equal(expectedCount, result.Count());
+			Assert.True(result.First().Id == expectedObject.Id);
+			var resultObject = result.First();
 			Assert.Equal(expectedObject.Id, resultObject.Id);
 			Assert.Equal(expectedObject.Message, resultObject.Message);
-			Assert.Equal(expectedObject.Value, resultObject.Value);
-			Assert.Equal(expectedObject.Value, resultObject.Value);
+			Assert.Equal(expectedObject.DefaultValue, resultObject.DefaultValue == null ? (bool?)null : resultObject.GetBoolValue());
 		}
 	}
 }

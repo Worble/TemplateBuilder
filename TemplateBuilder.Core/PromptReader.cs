@@ -6,12 +6,8 @@ namespace TemplateBuilder.Core
 	using System.Text.Json;
 	using System.Threading.Tasks;
 	using FluentValidation;
-	using TemplateBuilder.Core.Enums;
-	using TemplateBuilder.Core.Exceptions;
 	using TemplateBuilder.Core.Helpers;
-	using TemplateBuilder.Core.Models;
 	using TemplateBuilder.Core.Models.Prompts;
-	using TemplateBuilder.Core.Models.Prompts.Abstract;
 	using TemplateBuilder.Core.Validators;
 
 	public static class PromptReader
@@ -27,108 +23,80 @@ namespace TemplateBuilder.Core
 		/// <summary>Reads the prompts from the specified location</summary>
 		/// <param name="directory">The directory to read from</param>
 		/// <param name="fileName">Optional filename if the file is not named templatePrompts.json</param>
-		/// <returns>A Dictionary of <see cref="AbstractPrompt"/> with the <see cref="AbstractPrompt.Id"/> parameter as the key</returns>
+		/// <returns>An IEnumerable of <see cref="TemplatePrompt"/></returns>
 		/// <exception cref="ValidationException" />
 		/// <exception cref="FileNotFoundException" />
 		/// <exception cref="JsonException" />
 		/// <exception cref="ArgumentException" />
-		public static async Task<IDictionary<string, AbstractPrompt>> GetPromptsFromFile(string directory, string fileName = JSON_FILENAME)
+		public static async Task<IEnumerable<TemplatePrompt>> GetPromptsFromFile(string directory, string fileName = JSON_FILENAME)
 		{
 			if (string.IsNullOrWhiteSpace(directory))
 			{
 				throw new ArgumentException("Directory cannot be null or empty string", nameof(directory));
 			}
 
-			var serializedPrompts = await GetDeserializedTemplatePromptsFromFile(directory, fileName).ConfigureAwait(false);
+			var serializedPrompts = await DeserializePromptsFromFile(directory, fileName).ConfigureAwait(false);
 
 			ValidatePrompts(serializedPrompts);
 
-			return ConvertPrompts(serializedPrompts);
+			return serializedPrompts;
 		}
 
 		/// <summary>Reads the prompts from the provided JSON string</summary>
 		/// <param name="json">The JSON string to convert from</param>
-		/// <returns>A Dictionary of <see cref="AbstractPrompt"/> with the <see cref="AbstractPrompt.Id"/> parameter as the key</returns>
+		/// <returns>An IEnumerable of <see cref="TemplatePrompt"/></returns>
 		/// <exception cref="ValidationException" />
 		/// <exception cref="JsonException" />
 		/// <exception cref="ArgumentException" />
-		public static IDictionary<string, AbstractPrompt> GetPromptsFromString(string json)
+		public static IEnumerable<TemplatePrompt> GetPromptsFromString(string json)
 		{
 			if (string.IsNullOrWhiteSpace(json))
 			{
 				throw new ArgumentException("Directory cannot be null or empty string", nameof(json));
 			}
 
-			var serializedPrompts = JsonHelper.Deserialize<IEnumerable<DeserializedTemplatePrompt>>(json);
+			var serializedPrompts = JsonHelper.Deserialize<IEnumerable<TemplatePrompt>>(json);
 
 			ValidatePrompts(serializedPrompts);
 
-			return ConvertPrompts(serializedPrompts);
+			return serializedPrompts;
 		}
 
 		#endregion Public Methods
 
 		#region Private Methods
 
-		/// <summary>Converts all prompts to their appropriate underlying type</summary>
-		/// <param name="serializedPrompts"></param>
-		/// <returns>A Dictionary of <see cref="AbstractPrompt"/> with the Id parameter as the key</returns>
-		private static IDictionary<string, AbstractPrompt> ConvertPrompts(IEnumerable<DeserializedTemplatePrompt> serializedPrompts)
-		{
-			var prompts = new Dictionary<string, AbstractPrompt>();
-			foreach (var prompt in serializedPrompts)
-			{
-				prompts.Add(prompt.Id, GetPromptForType(prompt));
-			}
-
-			return prompts;
-		}
-
 		/// <summary>Reads the prompts from the json file in the specified directory</summary>
 		/// <param name="directory">The directory to read from</param>
 		/// <param name="filename"></param>
-		/// <returns>A list of deserialized prompts</returns>
-		/// <see cref="DeserializedTemplatePrompt"/>
+		/// <returns>A list of prompts</returns>
+		/// <see cref="TemplatePrompt"/>
 		/// <exception cref="FileNotFoundException" />
 		/// <exception cref="JsonException" />
-		private static Task<IEnumerable<DeserializedTemplatePrompt>> GetDeserializedTemplatePromptsFromFile(string directory, string filename)
+		private static Task<IEnumerable<TemplatePrompt>> DeserializePromptsFromFile(string directory, string filename)
 		{
 			var filePath = Path.Join(directory, filename);
 			if (!File.Exists(filePath))
 			{
 				throw new FileNotFoundException($"Prompt file does not exist on path {filePath}");
 			}
-			return JsonHelper.DeserializeFromFile<IEnumerable<DeserializedTemplatePrompt>>(filePath);
+			return JsonHelper.DeserializeFromFile<IEnumerable<TemplatePrompt>>(filePath);
 		}
 
-		/// <summary>Validates the deserialized prompts</summary>
+		/// <summary>Validates the prompts</summary>
 		/// <param name="serializedPrompts"></param>
 		/// <exception cref="ValidationException" />
-		private static void ValidatePrompts(IEnumerable<DeserializedTemplatePrompt> serializedPrompts)
+		private static void ValidatePrompts(IEnumerable<TemplatePrompt> serializedPrompts)
 		{
 			foreach (var prompt in serializedPrompts)
 			{
-				var validator = new DeserializedTemplatePromptValidator();
+				var validator = new TemplatePromptValidator();
 				var result = validator.Validate(prompt);
 				if (!result.IsValid)
 				{
 					throw new ValidationException(result.Errors);
 				}
 			}
-		}
-
-		/// <summary>Casts the deserialized into the appropriate underlying type</summary>
-		/// <param name="prompt"></param>
-		/// <returns><see cref="AbstractPrompt"/></returns>
-		private static AbstractPrompt GetPromptForType(DeserializedTemplatePrompt prompt)
-		{
-			return prompt.PromptType switch
-			{
-				PromptType.Boolean => (BooleanPrompt)prompt,
-				PromptType.String => (StringPrompt)prompt,
-				PromptType.Int => (IntPrompt)prompt,
-				_ => throw new InvalidPromptTypeException(),
-			};
 		}
 
 		#endregion Private Methods
