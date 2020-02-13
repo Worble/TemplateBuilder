@@ -1,12 +1,14 @@
 namespace TemplateBuilder.Core.Tests.PromptReaderTests
 {
 	using System;
+	using System.Collections.Generic;
 	using System.IO;
 	using System.Linq;
 	using System.Text.Json;
 	using System.Threading.Tasks;
 	using FluentValidation;
 	using TemplateBuilder.Core.Enums;
+	using TemplateBuilder.Core.Models.Prompts;
 	using TemplateBuilder.Core.Tests.Abstract;
 	using Xunit;
 
@@ -266,7 +268,7 @@ namespace TemplateBuilder.Core.Tests.PromptReaderTests
 		}
 
 		[Fact]
-		public async Task GivenAJsonFileWithMultipleValidPrompts_AndADifferentFilename_WhenGetPromptsFromFileIsCalled_ThenTheResultWillHaveTheCorrentAmountsOfPrompts()
+		public async Task GivenAJsonFileWithMultipleValidPrompts_AndADifferentFilename_WhenGetPromptsFromFileIsCalled_ThenAFileNotFoundExceptionWillBeThrown()
 		{
 			//arrange
 			var filename = Guid.NewGuid().ToString();
@@ -278,6 +280,54 @@ namespace TemplateBuilder.Core.Tests.PromptReaderTests
 			await Assert.ThrowsAsync<FileNotFoundException>(
 				() => PromptReader.GetPromptsFromFile(TempPath))
 				.ConfigureAwait(false);
+		}
+
+		[Theory]
+		[InlineData(new object[] { "test", "\"test\"" })]
+		[InlineData(new object[] { 123, "123" })]
+		[InlineData(new object[] { true, "true" })]
+		public async Task GivenAJsonStringWithAPromptWithAWhenArray_WhenGetPromptsFromFileIsCalled_ThenTheResultPromptWillHaveTheGivenWhenArray(object value, string jsonValue)
+		{
+			//arrange
+			var expectedWhen = new PromptWhen
+			{
+				Id = "question",
+				Is = value
+			};
+			var expectedPrompt = new TemplatePrompt
+			{
+				Id = "BooleanPromptId",
+				Message = "Boolean Prompt Message",
+				DefaultValue = false,
+				When = new List<PromptWhen>
+				{
+					expectedWhen
+				}
+			};
+			var jsonString = @"
+[
+	{
+		""promptType"": ""Boolean"",
+		""id"": ""BooleanPromptId"",
+		""message"": ""Boolean Prompt Message"",
+		""when"": [{
+			""id"": ""question"",
+			""is"": " + jsonValue + @"
+		}]
+	}
+]";
+			await File.WriteAllTextAsync(TempFile, jsonString).ConfigureAwait(false);
+
+			//act
+			var result = await PromptReader.GetPromptsFromFile(TempPath).ConfigureAwait(false);
+
+			//assert
+			Assert.Single(result);
+			var actualPrompt = result.First();
+			Assert.Equal(expectedPrompt.When.Count, actualPrompt.When.Count);
+			var actualWhen = actualPrompt.When[0];
+			Assert.Equal(expectedWhen.Id, actualWhen.Id);
+			Assert.Equal(expectedWhen.Is, actualWhen.Is);
 		}
 	}
 }

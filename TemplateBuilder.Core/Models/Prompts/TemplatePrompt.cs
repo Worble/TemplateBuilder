@@ -1,61 +1,77 @@
 namespace TemplateBuilder.Core.Models.Prompts
 {
+	using System;
 	using System.Collections.Generic;
 	using TemplateBuilder.Core.Enums;
 
 	public class TemplatePrompt
 	{
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles")]
+		protected internal object? _defaultValue;
+
 		public PromptType PromptType { get; set; }
-		public string Id { get; set; } = "";
-		public string Message { get; set; } = "";
-		public object? DefaultValue { get; set; }
+		public string Id { get; set; } = string.Empty;
+		public string Message { get; set; } = string.Empty;
 		public List<PromptWhen> When { get; set; } = new List<PromptWhen>();
 
-		public string GetStringValue()
+		public object DefaultValue
 		{
-			var value = string.Empty;
-			if (DefaultValue != null)
-			{
-				value = DefaultValue.ToString();
-			}
-
-			return value;
+			get => GetValue();
+			set => _defaultValue = value;
 		}
 
-		public bool GetBoolValue()
+		private object GetValue()
 		{
-			var value = false;
-			if (DefaultValue != null)
+			return PromptType switch
 			{
-				if (DefaultValue is bool boolValue)
-				{
-					value = boolValue;
-				}
-				else if (bool.TryParse(DefaultValue.ToString(), out boolValue))
-				{
-					value = boolValue;
-				}
-			}
-
-			return value;
+				PromptType.Boolean => GetBoolValue(),
+				PromptType.String => GetStringValue(),
+				PromptType.Int => GetIntValue(),
+				_ => throw new IndexOutOfRangeException(),
+			};
 		}
 
-		public int GetIntValue()
+		private string GetStringValue()
 		{
-			int value = default;
-			if (DefaultValue != null)
+			if (_defaultValue == null)
 			{
-				if (DefaultValue is int intValue)
-				{
-					value = intValue;
-				}
-				else if (int.TryParse(DefaultValue.ToString(), out intValue))
-				{
-					value = intValue;
-				}
+				return string.Empty;
 			}
+			return _defaultValue.ToString();
+		}
 
-			return value;
+		private bool GetBoolValue()
+		{
+			if (_defaultValue == null)
+			{
+				return default;
+			}
+			if (_defaultValue is bool boolValue)
+			{
+				return boolValue;
+			}
+			else if (bool.TryParse(_defaultValue.ToString(), out boolValue))
+			{
+				return boolValue;
+			}
+			return default;
+		}
+
+		private int GetIntValue()
+		{
+			if (_defaultValue == null)
+			{
+				return default;
+			}
+			if (_defaultValue is int intValue)
+			{
+				return intValue;
+			}
+			else if (int.TryParse(_defaultValue.ToString(), out intValue))
+			{
+				return intValue;
+			}
+			return default;
 		}
 	}
 }

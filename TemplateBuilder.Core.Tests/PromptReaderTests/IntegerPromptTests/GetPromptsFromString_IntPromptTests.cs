@@ -3,6 +3,7 @@ namespace TemplateBuilder.Core.Tests.PromptReaderTests.IntegerPromptTests
 	using System.Collections.Generic;
 	using System.Linq;
 	using FluentValidation;
+	using TemplateBuilder.Core.Enums;
 	using TemplateBuilder.Core.Models.Prompts;
 	using Xunit;
 
@@ -15,9 +16,10 @@ namespace TemplateBuilder.Core.Tests.PromptReaderTests.IntegerPromptTests
 			const int expectedCount = 1;
 			var expectedObject = new TemplatePrompt
 			{
+				PromptType = PromptType.Int,
 				Id = "IntegerPromptId",
 				Message = "Integer Prompt Message",
-				DefaultValue = null
+				DefaultValue = 0
 			};
 			const string jsonString = @"
 [
@@ -42,6 +44,7 @@ namespace TemplateBuilder.Core.Tests.PromptReaderTests.IntegerPromptTests
 			const int expectedCount = 1;
 			var expectedObject = new TemplatePrompt
 			{
+				PromptType = PromptType.Int,
 				Id = "IntegerPromptId",
 				Message = "Integer Prompt Message",
 				DefaultValue = 1
@@ -70,6 +73,7 @@ namespace TemplateBuilder.Core.Tests.PromptReaderTests.IntegerPromptTests
 			const int expectedCount = 1;
 			var expectedObject = new TemplatePrompt
 			{
+				PromptType = PromptType.Int,
 				Id = "IntegerPromptId",
 				Message = "Integer Prompt Message",
 				DefaultValue = 1
@@ -134,7 +138,7 @@ namespace TemplateBuilder.Core.Tests.PromptReaderTests.IntegerPromptTests
 			var resultObject = result.First();
 			Assert.Equal(expectedObject.Id, resultObject.Id);
 			Assert.Equal(expectedObject.Message, resultObject.Message);
-			Assert.Equal(expectedObject.DefaultValue, resultObject.DefaultValue == null ? (int?)null : resultObject.GetIntValue());
+			Assert.Equal(expectedObject.DefaultValue, resultObject.DefaultValue);
 		}
 	}
 }

@@ -3,6 +3,7 @@ namespace TemplateBuilder.Core.Tests.PromptReaderTests.BooleanPromptTests
 	using System.Collections.Generic;
 	using System.Linq;
 	using FluentValidation;
+	using TemplateBuilder.Core.Enums;
 	using TemplateBuilder.Core.Models.Prompts;
 	using Xunit;
 
@@ -15,9 +16,10 @@ namespace TemplateBuilder.Core.Tests.PromptReaderTests.BooleanPromptTests
 			const int expectedCount = 1;
 			var expectedObject = new TemplatePrompt
 			{
+				PromptType = PromptType.Boolean,
 				Id = "BooleanPromptId",
 				Message = "Boolean Prompt Message",
-				DefaultValue = null
+				DefaultValue = false
 			};
 			const string jsonString = @"
 [
@@ -42,6 +44,7 @@ namespace TemplateBuilder.Core.Tests.PromptReaderTests.BooleanPromptTests
 			const int expectedCount = 1;
 			var expectedObject = new TemplatePrompt
 			{
+				PromptType = PromptType.Boolean,
 				Id = "BooleanPromptId",
 				Message = "Boolean Prompt Message",
 				DefaultValue = true
@@ -70,6 +73,7 @@ namespace TemplateBuilder.Core.Tests.PromptReaderTests.BooleanPromptTests
 			const int expectedCount = 1;
 			var expectedObject = new TemplatePrompt
 			{
+				PromptType = PromptType.Boolean,
 				Id = "BooleanPromptId",
 				Message = "Boolean Prompt Message",
 				DefaultValue = true
@@ -98,6 +102,7 @@ namespace TemplateBuilder.Core.Tests.PromptReaderTests.BooleanPromptTests
 			const int expectedCount = 1;
 			var expectedObject = new TemplatePrompt
 			{
+				PromptType = PromptType.Boolean,
 				Id = "BooleanPromptId",
 				Message = "Boolean Prompt Message",
 				DefaultValue = false
@@ -126,6 +131,7 @@ namespace TemplateBuilder.Core.Tests.PromptReaderTests.BooleanPromptTests
 			const int expectedCount = 1;
 			var expectedObject = new TemplatePrompt
 			{
+				PromptType = PromptType.Boolean,
 				Id = "BooleanPromptId",
 				Message = "Boolean Prompt Message",
 				DefaultValue = false
@@ -188,9 +194,10 @@ namespace TemplateBuilder.Core.Tests.PromptReaderTests.BooleanPromptTests
 			Assert.Equal(expectedCount, result.Count());
 			Assert.True(result.First().Id == expectedObject.Id);
 			var resultObject = result.First();
+			Assert.Equal(expectedObject.PromptType, resultObject.PromptType);
 			Assert.Equal(expectedObject.Id, resultObject.Id);
 			Assert.Equal(expectedObject.Message, resultObject.Message);
-			Assert.Equal(expectedObject.DefaultValue, resultObject.DefaultValue == null ? (bool?)null : resultObject.GetBoolValue());
+			Assert.Equal(expectedObject.DefaultValue, resultObject.DefaultValue);
 		}
 	}
 }

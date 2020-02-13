@@ -11,10 +11,11 @@ namespace TemplateBuilder.Core.Validators
 			RuleFor(x => x.PromptType).NotEmpty().IsInEnum();
 			RuleFor(x => x.Id).NotEmpty();
 			RuleFor(x => x.Message).NotEmpty();
-			RuleFor(x => x.DefaultValue)
+			RuleFor(x => x._defaultValue)
 				.Must((prompt, value) => TryCast(prompt.PromptType, value!))
-				.When(x => x.DefaultValue != null)
+				.When(x => x._defaultValue != null)
 				.WithMessage("Default Value is not the correct type for prompt");
+			RuleForEach(x => x.When).SetValidator(new PromptWhenValidator());
 		}
 
 		private bool TryCast(PromptType promptType, object value)

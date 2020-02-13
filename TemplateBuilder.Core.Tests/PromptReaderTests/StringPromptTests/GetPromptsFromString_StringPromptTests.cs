@@ -2,6 +2,7 @@ namespace TemplateBuilder.Core.Tests.PromptReaderTests.StringPromptTests
 {
 	using System.Collections.Generic;
 	using System.Linq;
+	using TemplateBuilder.Core.Enums;
 	using TemplateBuilder.Core.Models.Prompts;
 	using Xunit;
 
@@ -14,9 +15,10 @@ namespace TemplateBuilder.Core.Tests.PromptReaderTests.StringPromptTests
 			const int expectedCount = 1;
 			var expectedObject = new TemplatePrompt
 			{
+				PromptType = PromptType.String,
 				Id = "StringPromptId",
 				Message = "String Prompt Message",
-				DefaultValue = null
+				DefaultValue = string.Empty
 			};
 			const string jsonString = @"
 [
@@ -41,6 +43,7 @@ namespace TemplateBuilder.Core.Tests.PromptReaderTests.StringPromptTests
 			const int expectedCount = 1;
 			var expectedObject = new TemplatePrompt
 			{
+				PromptType = PromptType.String,
 				Id = "StringPromptId",
 				Message = "String Prompt Message",
 				DefaultValue = "StringValue"
@@ -69,6 +72,7 @@ namespace TemplateBuilder.Core.Tests.PromptReaderTests.StringPromptTests
 			const int expectedCount = 1;
 			var expectedObject = new TemplatePrompt
 			{
+				PromptType = PromptType.String,
 				Id = "StringPromptId",
 				Message = "String Prompt Message",
 				DefaultValue = "123"
@@ -97,6 +101,7 @@ namespace TemplateBuilder.Core.Tests.PromptReaderTests.StringPromptTests
 			const int expectedCount = 1;
 			var expectedObject = new TemplatePrompt
 			{
+				PromptType = PromptType.String,
 				Id = "StringPromptId",
 				Message = "String Prompt Message",
 				DefaultValue = "False"
@@ -125,7 +130,7 @@ namespace TemplateBuilder.Core.Tests.PromptReaderTests.StringPromptTests
 			var resultObject = result.First();
 			Assert.Equal(expectedObject.Id, resultObject.Id);
 			Assert.Equal(expectedObject.Message, resultObject.Message);
-			Assert.Equal(expectedObject.DefaultValue, resultObject.DefaultValue == null ? null : resultObject.GetStringValue());
+			Assert.Equal(expectedObject.DefaultValue, resultObject.DefaultValue);
 		}
 	}
 }

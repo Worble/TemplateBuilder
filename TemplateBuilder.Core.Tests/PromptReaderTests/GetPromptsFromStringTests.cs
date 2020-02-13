@@ -196,7 +196,7 @@ namespace TemplateBuilder.Core.Tests.PromptReaderTests
 		}
 
 		[Fact]
-		public void test()
+		public void GivenAJsonStringWithAPromptWithAWhenArray_WhenGetPromptsFromStringIsCalled_ThenTheResultPromptWillHaveTheGivenWhenArray()
 		{
 			//arrange
 			var expectedWhen = new PromptWhen
@@ -208,7 +208,7 @@ namespace TemplateBuilder.Core.Tests.PromptReaderTests
 			{
 				Id = "BooleanPromptId",
 				Message = "Boolean Prompt Message",
-				DefaultValue = null,
+				DefaultValue = false,
 				When = new List<PromptWhen>
 				{
 					expectedWhen

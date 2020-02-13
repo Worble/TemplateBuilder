@@ -2,7 +2,7 @@
 
 ### High Priority
 
-- Add `where` or `when` to prompts so questions can be asked programmatically
+- ~~Add `where` or `when` to prompts so questions can be asked programmatically~~
 
 - Ensure cleanup on failure
 
@@ -15,6 +15,8 @@
 - Add some default variables that can be accessed in all templates (source and destination directories, for example)
 
 - Add ability to use a git url instead of a directory
+
+- Fix `when` infinite looping if Id doesn't exist
 
 
 ### Low priority

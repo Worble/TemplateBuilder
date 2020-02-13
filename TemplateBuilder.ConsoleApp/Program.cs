@@ -1,6 +1,7 @@
 namespace TemplateBuilder.ConsoleApp
 {
 	using System;
+	using System.Linq;
 	using McMaster.Extensions.CommandLineUtils;
 	using TemplateBuilder.Core;
 
@@ -27,7 +28,7 @@ namespace TemplateBuilder.ConsoleApp
 				var prompts = await PromptReader
 					.GetPromptsFromFile(originPath)
 					.ConfigureAwait(false);
-				var promptResults = ConsolePromptReader.WritePrompts(prompts);
+				var promptResults = ConsolePromptReader.WritePrompts(prompts.ToList());
 
 				var config = await ConfigReader
 					.GetConfigFromFile(originPath, promptResults)
