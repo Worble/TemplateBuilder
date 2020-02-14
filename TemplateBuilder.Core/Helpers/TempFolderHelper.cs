@@ -8,6 +8,10 @@ namespace TemplateBuilder.Core.Helpers
 		private const string TEMP_FOLDER = "TemplateBuilderTemporaryFiles";
 		private static string TempFolderPath => Path.Join(Path.GetTempPath(), TEMP_FOLDER);
 
+		/// <summary>
+		/// Creates a new temporary folder.
+		/// </summary>
+		/// <returns>The temporary folder name.</returns>
 		public static string GetTempFolder()
 		{
 			var dir = Path.Join(TempFolderPath, Guid.NewGuid().ToString());
@@ -22,6 +26,9 @@ namespace TemplateBuilder.Core.Helpers
 			}
 		}
 
+		/// <summary>
+		/// Cleans up all temporary folders.
+		/// </summary>
 		public static void CleanupAllTempFolders()
 		{
 			if (Directory.Exists(TempFolderPath))
