@@ -63,9 +63,32 @@ namespace TemplateBuilder.Core
 		/// <param name="fileGroups">The file groups.</param>
 		public static async Task MoveFiles(string origin, string destination, IEnumerable<FileGroup> fileGroups, CancellationToken cancellationToken = default)
 		{
-			foreach (var group in fileGroups)
+			var temp = TempFolderHelper.GetTempFolder();
+			Directory.CreateDirectory(temp);
+			try
 			{
-				await ProcessGroup(origin, destination, group, cancellationToken).ConfigureAwait(false);
+				foreach (var group in fileGroups)
+				{
+					await ProcessGroup(origin, temp, group, cancellationToken).ConfigureAwait(false);
+				}
+
+				//Now Create all of the directories
+				foreach (var dirPath in Directory.GetDirectories(temp, "*",
+					SearchOption.AllDirectories))
+				{
+					Directory.CreateDirectory(dirPath.Replace(temp, destination));
+				}
+
+				//Copy all the files & Replaces any files with the same name
+				foreach (var newPath in Directory.GetFiles(temp, "*",
+					SearchOption.AllDirectories))
+				{
+					File.Move(newPath, newPath.Replace(temp, destination));
+				}
+			}
+			finally
+			{
+				Directory.Delete(temp, true);
 			}
 		}
 
