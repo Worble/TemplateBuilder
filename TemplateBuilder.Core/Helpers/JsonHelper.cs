@@ -1,10 +1,10 @@
 namespace TemplateBuilder.Core.Helpers
 {
-	using System;
 	using System.IO;
 	using System.Text.Json;
 	using System.Text.Json.Serialization;
 	using System.Threading.Tasks;
+	using TemplateBuilder.Core.JsonConverters;
 
 	public static class JsonHelper
 	{
@@ -44,49 +44,6 @@ namespace TemplateBuilder.Core.Helpers
 			jsonOpts.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
 			jsonOpts.Converters.Add(new ObjectConverter());
 			return jsonOpts;
-		}
-	}
-
-	public class ObjectConverter : JsonConverter<object>
-	{
-		public override object Read(ref Utf8JsonReader reader, Type type, JsonSerializerOptions options)
-		{
-			if (reader.TokenType == JsonTokenType.True)
-			{
-				return true;
-			}
-
-			if (reader.TokenType == JsonTokenType.False)
-			{
-				return false;
-			}
-
-			// Forward to the JsonElement converter
-			if (options.GetConverter(typeof(JsonElement)) is JsonConverter<JsonElement> converter)
-			{
-				if (reader.TokenType == JsonTokenType.Number)
-				{
-					return converter.Read(ref reader, type, options).GetInt32();
-				}
-				if (reader.TokenType == JsonTokenType.String)
-				{
-					return converter.Read(ref reader, type, options).GetString();
-				}
-				return converter.Read(ref reader, type, options);
-			}
-
-			throw new JsonException();
-
-			// or for best performance, copy-paste the code from that converter:
-			//using (JsonDocument document = JsonDocument.ParseValue(ref reader))
-			//{
-			//    return document.RootElement.Clone();
-			//}
-		}
-
-		public override void Write(Utf8JsonWriter writer, object value, JsonSerializerOptions options)
-		{
-			throw new InvalidOperationException("Directly writing object not supported");
 		}
 	}
 }
